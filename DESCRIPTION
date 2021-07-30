@@ -1,4 +1,4 @@
-Package: projectLive.CSBC
+Package: projectLive
 Title: Live View of CSBC projects on Synapse
 Version: 1.0
 Authors@R: c(
