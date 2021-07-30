@@ -2,8 +2,6 @@
 
 export(run_app)
 import(shiny)
-import(shinydashboard)
-import(waiter)
 importFrom(config,get)
 importFrom(golem,with_golem_options)
 importFrom(shiny,shinyApp)
