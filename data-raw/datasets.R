@@ -1,22 +1,27 @@
 require(magrittr)
 devtools::load_all()
 syn <- create_synapse_login()
-studies <- get_synapse_tbl(syn, "syn21918972") %>% 
+
+studies <- projectlive.modules::get_synapse_tbl(syn, "syn21918972") %>% 
   dplyr::select("grantId", "grantType")
-datasets_unmerged <-  get_synapse_tbl(syn, "syn21889931") %>% 
+
+datasets_created<-  projectlive.modules::get_synapse_tbl(syn, "syn21889931") %>% 
   dplyr::select("id", "createdOn")
-datasets <- get_synapse_tbl(syn, "syn21897968") %>% 
+
+datasets <- projectlive.modules::get_synapse_tbl(syn, "syn21897968") %>% 
   dplyr::mutate(
     "accessType" = "PUBLIC",
     "grantId" = purrr::map_chr(.data$grantId, purrr::pluck, 1)
   ) %>% 
   dplyr::left_join(studies) %>% 
-  dplyr::left_join(datasets, by = c("datasetId" = "id")) %>% 
-  format_date_columns()
+  dplyr::left_join(datasets_created, by = c("datasetId" = "id")) %>% 
+  projectlive.modules::format_date_columns() %>% 
+  dplyr::select(-"createdOn")
   
 
-saveRDS(datasets, "files.RDS")
+saveRDS(datasets, "datasets.RDS")
 store_file_in_synapse(
+  syn,
   "datasets.RDS",
   "syn24172460"
 )

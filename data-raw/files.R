@@ -1,6 +1,7 @@
 require(magrittr)
 devtools::load_all()
 syn <- create_synapse_login()
+
 studies <- 
   projectlive.modules::get_synapse_tbl(
     syn, 
@@ -9,8 +10,7 @@ studies <-
       "grantName",
       "theme"
     )
-  ) %>% 
-  dplyr::select(-c("ROW_ID", "ROW_VERSION"))
+  ) 
 
 files <-
   projectlive.modules::get_synapse_tbl(
@@ -29,13 +29,14 @@ files <-
       "experimentalStrategy"
     )
   ) %>%
-  format_date_columns() %>%
-  dplyr::select(-c("createdOn", "ROW_ID", "ROW_VERSION", "ROW_ETAG")) %>%
+  projectlive.modules::format_date_columns() %>%
+  dplyr::select(-c("createdOn")) %>%
   dplyr::mutate( "accessType" = "PUBLIC") %>% 
   dplyr::inner_join(studies, by = "grantName")
   
 saveRDS(files, "files.RDS")
 store_file_in_synapse(
+  syn,
   "files.RDS",
   "syn24172460"
 )

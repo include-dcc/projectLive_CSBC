@@ -1,22 +1,21 @@
-#' @import shiny
-#' @import shinydashboard
-#' @import waiter
+app_ui <- function(req) {
+  projectlive.modules::oauth_ui(req, ui_function, OAUTH_LIST)
+}
 
-app_ui <- function() {
-  tagList(
-    # Leave this function for adding external resources
+ui_function <- function(){
+  shiny::tagList(
     golem_add_external_resources(),
     waiter::use_waiter(),
-  waiter::waiter_show_on_load(html = span(
+    waiter::waiter_show_on_load(html = span(
       style="color:white;",
       waiter::spin_pulsar(),
-      h3("logging in...")
+      shiny::h3("logging in...")
     )),
     shiny::navbarPage(   
       title = shiny::strong("projectLive"), selected = "About",	
       shiny::tabPanel(
         "About",
-        mod_about_page_ui("about_page_ui_1"),
+        projectlive.modules::synapse_module_ui("synapse_module"),
         icon = shiny::icon("info-circle")
       ),
       shiny::tabPanel(
@@ -26,16 +25,22 @@ app_ui <- function() {
       ),
       shiny::tabPanel(
         "Publications",
-        projectlive.modules::publication_status_module_ui("publication_status_ui_1"),
-        icon = shiny::icon("chart-area")
+        projectlive.modules::publication_status_module_ui("file_status_ui_1"),
+        icon = shiny::icon("book-reader")
       ),
       shiny::tabPanel(
-        "Studies",
+        "Participating Studies",
         projectlive.modules::study_summary_module_ui("study_summary_ui_1"),
-        icon = shiny::icon("chart-area")
+        icon = shiny::icon("bar-chart-o")
+      ),
+      shiny::tabPanel(
+        "New Submissions",
+        projectlive.modules::new_submissions_module_ui("new_submissions_module"),
+        icon = shiny::icon("bar-chart-o")
       ),
       collapsible = TRUE,	inverse = TRUE,
-      windowTitle = "projectLive")
+      windowTitle = "projectLive"
+    )
   )
 }
 
