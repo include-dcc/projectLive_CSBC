@@ -14,44 +14,29 @@ app_server <- shinyServer(function(input, output, session) {
     shiny::titlePanel(sprintf("Welcome, %s", syn$getUserProfile()$userName))
   })
   
-  data <- projectlive.modules::synapse_module_server(
-    id = "synapse_module",
-    syn = syn,
-    config = shiny::reactive(
-      jsonlite::read_json("inst/synapse_module.json")
-    )
-  )
+  # projectlive.modules::synapse_module_server(
+  #   id = "synapse_module",
+  #   syn = syn,
+  #   config = shiny::reactive(
+  #     jsonlite::read_json("inst/synapse_module.json")
+  #   )
+  # )
   
-  projectlive.modules::summary_snapshot_module_server(
-    id = "summary_snapshot_ui_1",
-    data = data,
-    config = shiny::reactive(
-      jsonlite::read_json("inst/summary_snapshot_module.json")
-    )
-  )
+  googledrive::drive_auth(email = "andrew.lamb@sagebase.org")
   
-  projectlive.modules::publication_status_module_server(
-    id = "file_status_ui_1",
-    data = data,
-    config = shiny::reactive(
-      jsonlite::read_json("inst/publication_status_module.json")
-    )
+  googledrive::drive_download(
+    "https://docs.google.com/spreadsheets/d/10RVYIuW3lW7wV6yIEDirhiyhrrL1_vvO/edit#gid=1091731933",
+    path = "htp.xlxs"
   )
+
+  htp_tbl <- readxl::read_excel("htp.xlxs", skip = 6)
+  file.remove("htp.xlxs")
+
+  output$htp_table = DT::renderDataTable({
+    htp_tbl
+  })
   
-  projectlive.modules::study_summary_module_server(
-    id = "study_summary_ui_1",
-    data = data,
-    config = shiny::reactive(
-      jsonlite::read_json("inst/study_summary_module.json")
-    )
-  )
+
   
-  projectlive.modules::new_submissions_module_server(
-    id = "new_submissions_module",
-    data = data,
-    config = shiny::reactive(
-      jsonlite::read_json("inst/new_submissions_module.json")
-    )
-  )
-  
+
 })
